@@ -155,7 +155,7 @@ include_directories(
 # )
 
 add_executable(pclPeopleDetection src/pclPeopleDetection.cpp)
-target_link_libraries(pclPeopleDetection ${catkin_LIBRARIES})
+target_link_libraries(pclPeopleDetection ${catkin_LIBRARIES} ${PCL_LIBRARIES})
 
 #############
 ## Install ##
