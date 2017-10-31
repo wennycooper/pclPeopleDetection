@@ -30,7 +30,7 @@ pcl::people::GroundBasedPeopleDetectionApp<PointT> people_detector;    // people
 
 std::string svm_filename = "/home/kkuei/catkin_ws/src/pclPeopleDetection/src/trainedLinearSVMForPeopleDetectionWithHOG.yaml";
 float min_confidence = -1.5;
-float min_height = 1.3;
+float min_height = 1.0;
 float max_height = 2.3;
 float voxel_size = 0.06;
 Eigen::Matrix3f rgb_intrinsics_matrix;
@@ -45,8 +45,7 @@ void callback(const PointCloud::ConstPtr& callback_cloud)
   
   if (first_cloud) {
     first_cloud = false;
-//    point_picking();
-// Ground plane: 0.033299 0.998978 0.0305551 -1.2932
+    //point_picking();
     //return;  
   } else {
 //    std::cout << "more clouds..." << std::endl;
@@ -125,7 +124,8 @@ process_cloud()
 
   ground_coeffs = people_detector.getGround();                 // get updated floor coefficients
 
-      // Draw cloud and people bounding boxes in the viewer:
+  // Draw cloud and people bounding boxes in the viewer:
+  //viewer.setCameraPosition(0,0,-2,0,-1,0,0);
   viewer.removeAllPointClouds();
   viewer.removeAllShapes();
   pcl::visualization::PointCloudColorHandlerRGBField<PointT> rgb(cloud);
@@ -157,7 +157,8 @@ int main(int argc, char** argv)
   ros::Subscriber sub = nh.subscribe<PointCloud>("/camera/depth_registered/points", 1, callback);
 
   ground_coeffs.resize(4);
-  ground_coeffs << 0.033299, 0.998978, 0.0305551, -1.2932;
+// coeffs in officei: -0.0323267 0.999054 -0.0291018 -0.947593
+  ground_coeffs << -0.0323267, 0.999054, -0.0291018, -0.947593;
 
   rgb_intrinsics_matrix << 525, 0.0, 319.5, 0.0, 525, 239.5, 0.0, 0.0, 1.0; // Kinect RGB camera intrinsics
 
@@ -175,6 +176,8 @@ int main(int argc, char** argv)
   people_detector.setHeightLimits(min_height, max_height);         // set person classifier
 //  people_detector.setSensorPortraitOrientation(true);             // set sensor orientation to vertical
 
+  // set camera default position
+  viewer.setCameraPosition(0,0,-2,0,-1,0,0);
 
   ros::spin();
 
